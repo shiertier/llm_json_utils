@@ -1,0 +1,18 @@
+[package]
+name = "json_repair_rust"
+version = "0.1.0"
+edition = "2021"
+description = "Fast, minimal JSON repair (truncation + trailing commas) implemented in Rust and exposed to Python via PyO3."
+license = "MIT"
+readme = "README.md"
+repository = "https://github.com/shiertier/json_repair_rust"
+homepage = "https://github.com/shiertier/json_repair_rust"
+keywords = ["json", "parser", "repair", "pyo3", "maturin"]
+categories = ["api-bindings", "parsing"]
+
+[lib]
+name = "json_repair_rust"
+crate-type = ["cdylib"]
+
+[dependencies]
+pyo3 = { version = "0.22", features = ["extension-module"] }

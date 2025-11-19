@@ -1,0 +1,29 @@
+[build-system]
+requires = ["maturin>=1.7,<2.0"]
+build-backend = "maturin"
+
+[project]
+name = "json-repair-rust"
+version = "0.1.0"
+description = "Fast, minimal JSON repair implemented in Rust (PyO3), focusing on truncation and trailing comma fixes."
+readme = "README.md"
+requires-python = ">=3.8"
+license = { text = "MIT" }
+authors = [{ name = "shiertier", email = "junjie.text@gmail.com" }]
+classifiers = [
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Rust",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+Homepage = "https://github.com/shiertier/json_repair_rust"
+Repository = "https://github.com/shiertier/json_repair_rust"
+
+[tool.maturin]
+bindings = "pyo3"
+features = []
