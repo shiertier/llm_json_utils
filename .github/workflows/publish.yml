@@ -48,6 +48,9 @@ jobs:
     steps:
       - uses: actions/download-artifact@v4
         with:
+          # Download all wheel artifacts into a single flat dist/ directory
+          pattern: wheels-*
+          merge-multiple: true
           path: dist
 
       - name: Publish to PyPI
