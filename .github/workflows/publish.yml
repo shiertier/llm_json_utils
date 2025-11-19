@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-13, macos-14]
+        os: [ubuntu-latest, windows-latest, macos-15-intel, macos-latest]
 
     steps:
       - uses: actions/checkout@v4
@@ -20,11 +20,11 @@ jobs:
       - name: Build wheels with maturin
         uses: PyO3/maturin-action@v1
         with:
-          working-directory: json_repair_rust
-          # Build wheels for all supported Python versions on each platform
-          args: --release --out dist
+          # The repo root is already json_repair_rust, so build from "."
+          working-directory: .
+          command: build
+          args: --release --out dist --sdist
           manylinux: auto
-          sdist: true
 
       - name: Upload wheels as artifact
         uses: actions/upload-artifact@v4
