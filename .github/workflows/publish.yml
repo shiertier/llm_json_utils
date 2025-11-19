@@ -54,8 +54,13 @@ jobs:
           path: dist
 
       - name: Publish to PyPI
-        uses: pypa/gh-action-pypi-publish@v1.8.14
+        uses: pypa/gh-action-pypi-publish@release/v1
         with:
           password: ${{ secrets.PYPI_API_TOKEN }}
           packages-dir: dist
           skip-existing: true
+          # See https://github.com/pypi/warehouse/issues/15611:
+          # Twine's metadata validator may lag behind the latest
+          # core-metadata spec (2.4+). Disable local verification
+          # and let PyPI perform final validation instead.
+          verify-metadata: false
