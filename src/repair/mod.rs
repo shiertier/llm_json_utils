@@ -31,38 +31,64 @@ impl<'a> Parser<'a> {
                 continue;
             }
 
-            // Markdown-style fenced code blocks: ```json ... ```
-            if ch == '`' {
-                let mut la = self.chars.clone();
-                let first = la.next();
-                let second = la.next();
-                let third = la.next();
-                if matches!((first, second, third), (Some('`'), Some('`'), Some('`'))) {
-                    // consume the opening ```
-                    self.chars.next();
-                    self.chars.next();
-                    self.chars.next();
-                    self.consume_fence_block();
-                    continue;
-                }
-            }
-
             if ch == '/' {
-                let mut la = self.chars.clone();
-                la.next(); // consume '/'
-                match la.next() {
+                // Check next char without consuming '/' yet if possible,
+                // but Peekable only gives us 1 lookahead.
+                // So we must consume '/' to check the next one.
+                // If it's not a comment, we are in trouble because we can't put it back.
+                // BUT: In JSON, '/' is only valid in strings (handled elsewhere) or comments.
+                // It cannot start a value.
+                // So if we see '/', it MUST be a comment or an error.
+                // Wait, strict JSON doesn't allow comments, but we do.
+                // If it's not a comment, it's an invalid char anyway.
+                // So we can safely consume it.
+                self.chars.next(); // consume '/'
+                match self.chars.peek() {
                     Some('/') => {
                         self.consume_until_newline();
                         continue;
                     }
                     Some('*') => {
-                        self.chars.next();
-                        self.chars.next();
+                        self.chars.next(); // consume '*'
                         self.consume_block_comment();
                         continue;
                     }
-                    _ => {}
+                    _ => {
+                        // Not a comment. Since '/' is invalid start of value,
+                        // we can just let the next parse_value call fail on it
+                        // or fail here. But `skip` functions usually just skip what they know.
+                        // However, we already consumed '/'.
+                        // If we return now, the next call sees the char AFTER '/'.
+                        // This might be confusing.
+                        // But wait, `parse_value` calls `skip_whitespace...` first.
+                        // If we consumed '/', `parse_value` will see the next char.
+                        // If the next char is 'a', it errors "Unexpected character 'a'".
+                        // The error message won't mention '/'.
+                        // This is a slight deviation but acceptable for "repair" logic
+                        // that assumes if it looks like a comment, it is one.
+                        // If it's just a lone slash, it's garbage.
+                        return;
+                    }
                 }
+            }
+
+            // Markdown-style fenced code blocks: ```json ... ```
+            if ch == '`' {
+                // We need to check for 3 backticks.
+                // We can consume them. If we don't find 3, it's invalid syntax anyway
+                // (JSON doesn't start with backtick).
+                self.chars.next(); // 1st
+                if let Some('`') = self.chars.peek() {
+                    self.chars.next(); // 2nd
+                    if let Some('`') = self.chars.peek() {
+                        self.chars.next(); // 3rd
+                        self.consume_fence_block();
+                        continue;
+                    }
+                }
+                // If we are here, we saw 1 or 2 backticks but not 3.
+                // It's garbage.
+                return;
             }
 
             return;

@@ -86,6 +86,36 @@ fn test_repair_suite() -> PyResult<()> {
 }
 
 #[test]
+fn test_repair_failure_suite() -> PyResult<()> {
+    pyo3::prepare_freethreaded_python();
+    Python::with_gil(|py| {
+        let failure_dir = Path::new("tests/failure/repair");
+        if failure_dir.exists() {
+            let mut entries: Vec<_> = fs::read_dir(failure_dir)
+                .expect("Failed to read tests/failure/repair directory")
+                .map(|res| res.map(|e| e.path()))
+                .collect::<Result<_, _>>()
+                .expect("Failed to collect paths");
+            entries.sort();
+
+            for path in entries {
+                if path.extension().and_then(|s| s.to_str()) == Some("txt") {
+                    println!("Testing REPAIR FAILURE case: {:?}", path);
+                    let content = fs::read_to_string(&path).expect("Failed to read file");
+                    let res = llm_json_utils::repair_json(py, &content);
+                    if res.is_ok() {
+                        panic!("  [FAIL] Expected failure but passed for {:?}", path);
+                    } else {
+                        println!("  [PASS] Failed as expected");
+                    }
+                }
+            }
+        }
+        Ok(())
+    })
+}
+
+#[test]
 fn test_structural_suite() -> PyResult<()> {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
