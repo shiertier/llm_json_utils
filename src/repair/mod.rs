@@ -166,7 +166,7 @@ impl<'a> Parser<'a> {
             let key_obj = self.parse_value(py)?;
             if key_obj.downcast::<PyString>(py).is_err() {
                 return Err(PyValueError::new_err(
-                    "Object keys must be strings in llm_json_repair",
+                    "Object keys must be strings in llm_json_utils",
                 ));
             }
 
@@ -177,7 +177,7 @@ impl<'a> Parser<'a> {
                 }
                 _ => {
                     return Err(PyValueError::new_err(
-                        "Expected ':' after object key in llm_json_repair",
+                        "Expected ':' after object key in llm_json_utils",
                     ));
                 }
             }
@@ -199,7 +199,7 @@ impl<'a> Parser<'a> {
                 return Ok(dict.into_py(py));
             }
             return Err(PyValueError::new_err(
-                "Expected ',' or '}' in object in llm_json_repair",
+                "Expected ',' or '}' in object in llm_json_utils",
             ));
         }
     }
@@ -240,7 +240,7 @@ impl<'a> Parser<'a> {
                 return Ok(list.into_py(py));
             }
             return Err(PyValueError::new_err(
-                "Expected ',' or ']' in array in llm_json_repair",
+                "Expected ',' or ']' in array in llm_json_utils",
             ));
         }
     }
@@ -339,7 +339,7 @@ impl<'a> Parser<'a> {
         }
 
         Err(PyValueError::new_err(format!(
-            "Invalid number literal {s:?} in llm_json_repair"
+            "Invalid number literal {s:?} in llm_json_utils"
         )))
     }
 

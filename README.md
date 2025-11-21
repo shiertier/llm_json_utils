@@ -1,6 +1,6 @@
-# llm_json_repair
+# llm_json_utils
 
-Rust/Python utilities for **deterministic JSON cleanup** and **schema‑guided extraction** from messy LLM/log output. Exposed via [PyO3](https://github.com/PyO3/pyo3) + [maturin](https://github.com/PyO3/maturin) as the module `llm_json_utils` (PyPI package name `llm-json-utils`, repo `llm_json_repair`).
+Rust/Python utilities for **deterministic JSON cleanup** and **schema‑guided extraction** from messy LLM/log output. Exposed via [PyO3](https://github.com/PyO3/pyo3) + [maturin](https://github.com/PyO3/maturin) as the module `llm_json_utils` (PyPI package name `llm_json_utils`, repo `llm_json_utils`).
 
 > 简体中文文档请见：[README.zh-CN.md](README.zh-CN.md)
 
@@ -12,7 +12,7 @@ Rust/Python utilities for **deterministic JSON cleanup** and **schema‑guided e
 ## `repair_json`: deterministic structural patcher
 
 - Auto-closes truncated objects/arrays at EOF and tolerates trailing commas.
-- Ignores `//` / `#` line comments, `/*...*/` block comments, and fenced ``` ``` code blocks so you can feed Markdown directly.
+- Ignores `//` / `#` line comments, `/*...*/` block comments, and fenced ` ` code blocks so you can feed Markdown directly.
 - Parses numbers like Python: ints -> `int`, floats -> `float`, huge ints -> Python `int` (arbitrary precision).
 - Preserves unknown escapes and broken `\u` sequences instead of dropping data.
 - Raises `ValueError` on real structural errors (missing `:`, mismatched delimiters, etc.) rather than guessing user intent.
